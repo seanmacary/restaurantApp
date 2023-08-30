@@ -22,6 +22,8 @@ class Restaurants(models.Model):
     Cuisinetype = models.TextField()
     Address = models.CharField(max_length=255)
     Rating = models.FloatField()
+    Latitude = models.FloatField(null=True, blank=True)
+    Longitude = models.FloatField(null=True, blank=True)
     Created_at = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
 
