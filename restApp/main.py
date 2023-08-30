@@ -1,5 +1,3 @@
-import json
-
 import requests
 import sqlite3
 
@@ -8,7 +6,7 @@ cursor = conn.cursor()
 
 # Define the table structure
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS restaurants (
+CREATE TABLE IF NOT EXISTS Restaurants (
     id INTEGER PRIMARY KEY,
     name TEXT,
     latitude REAL,
