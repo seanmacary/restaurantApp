@@ -36,6 +36,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with Django's test runner
       run: |
-        python manage.py test
+        python restaurantApp/restApp/manage.py test
       env: 
          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
