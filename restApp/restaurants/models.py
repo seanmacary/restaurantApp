@@ -25,6 +25,7 @@ class Restaurants(models.Model):
     Latitude = models.FloatField(null=True, blank=True)
     Longitude = models.FloatField(null=True, blank=True)
     Created_at = models.DateTimeField(auto_now_add=True)
+    TotalReview = models.PositiveIntegerField(default=0)
     objects = models.Manager()
 
     class Meta:
