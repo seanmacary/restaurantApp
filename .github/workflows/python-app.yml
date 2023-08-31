@@ -27,7 +27,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f restApp/requirements.txt ]; then pip install -r restApp/requirements.txt; fi
     - name: List installed packages
       run: pip freeze
     - name: Lint with flake8
