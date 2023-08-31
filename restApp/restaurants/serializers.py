@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Restaurants
-from django.contrib.auth.models import User
+from .models import Restaurants, CustomUser
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -13,12 +12,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
-        model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name']
+        model = CustomUser
+        fields = ['UserName', 'password', 'email', 'first_name', 'last_name']
         extra_kwargs = {'password': {'write_only': True}}
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['username', 'email', 'first_name', 'last_name']
+        model = CustomUser
+        fields = ['UserName', 'email', 'first_name', 'last_name', 'bio', 'profile_picture']
+

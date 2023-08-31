@@ -1,4 +1,4 @@
-from .models import Restaurants
+from .models import Restaurants, CustomUser as User
 from .serializers import RestaurantSerializer, UserRegistrationSerializer, UserProfileSerializer
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.views import APIView
@@ -7,10 +7,9 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.db.models import F, Func
+from django.db.utils import IntegrityError
 
 
 class RestaurantList(generics.ListAPIView):
@@ -34,8 +33,16 @@ class RestaurantList(generics.ListAPIView):
 
 
 class UserRegistrationView(CreateAPIView):
+    authentication_classes = ()  # Override the default authentication
+    permission_classes = ()
     serializer_class = UserRegistrationSerializer
     queryset = User.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            return super(UserRegistrationView, self).create(request, *args, **kwargs)
+        except IntegrityError:
+            return Response({"error": "Email already in use"}, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -45,8 +52,8 @@ class UserRegistrationView(CreateAPIView):
 
 class UserLoginView(APIView):
     def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
+        username = request.data.get("UserName")
+        password = request.data.get("Password")
         user = authenticate(username=username, password=password)
         if user:
             token, created = Token.objects.get_or_create(user=user)
@@ -57,7 +64,7 @@ class UserLoginView(APIView):
 class UserProfileView(RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
-    lookup_field = 'username'
+    lookup_field = 'UserName'
 
     def get_object(self):
         return self.request.user
