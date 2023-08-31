@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'restaurants.apps.RestaurantsConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 
