@@ -18,7 +18,11 @@ jobs:
         if [ -f restApp/requirements.txt ]; then pip install -r restApp/requirements.txt; fi
     - name: Analysing the code with pylint
       run: |
-        export PYTHONUTF8=1
+        for file in $(git ls-files '*.py'); do
+          if file "$file" | grep -q "with BOM"; then
+            sed -i '1s/^\xEF\xBB\xBF//' "$file"
+          fi
+        done
         pylint $(git ls-files '*.py')
       
 
