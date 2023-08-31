@@ -6,7 +6,6 @@ from .serializers import RestaurantSerializer
 
 class RestaurantList(generics.ListAPIView):
     serializer_class = RestaurantSerializer
-    print(serializer_class.data)
 
     def get_queryset(self):
         # Get user location from request
