@@ -17,7 +17,6 @@ jobs:
         pip install pylint
         if [ -f restApp/requirements.txt ]; then pip install -r restApp/requirements.txt; fi
     - name: Analysing the code with pylint
-    - name: Analysing the code with pylint
       run: |
         export PYTHONUTF8=1
         pylint $(git ls-files '*.py')
