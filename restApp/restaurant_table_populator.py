@@ -1,3 +1,9 @@
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'restApp.settings')
+django.setup()
+
 import requests
 from restaurants.models import Restaurants
 
@@ -53,15 +59,17 @@ for lat in range(int(min_latitude * 100), int(max_latitude * 100), int(latitude_
                 latitude = restaurant.get('coordinates').get('latitude')
                 longitude = restaurant.get('coordinates').get('longitude')
                 address = ', '.join(restaurant.get('location', {}).get('display_address', []))
+                rating = restaurant.get('rating')
 
                 restaurant_instance, created = Restaurants.objects.get_or_create(
-                    name=name,
+                    Name=name,
                     defaults={
                         'TotalReview': total_review_count,
                         'Cuisinetype': cuisine_type,
                         'Latitude': latitude,
                         'Longitude': longitude,
-                        'Address': address
+                        'Address': address,
+                        'Rating': rating
                     }
                 )
 
@@ -72,6 +80,7 @@ for lat in range(int(min_latitude * 100), int(max_latitude * 100), int(latitude_
                     restaurant_instance.Latitude = latitude
                     restaurant_instance.Longitude = longitude
                     restaurant_instance.Address = address
+                    restaurant_instance.Rating = rating
                     restaurant_instance.save()
 
         else:
