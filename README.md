@@ -19,3 +19,5 @@
   3) Navigate to `/frontend` and install the required packages using `npm install`
   4) In an IDE terminal, start the backend Django server in `/restApp` using `python manage.py runserver`
   5) In a new IDE terminal, start the React frontend in `/frontend` using `npm start`  
+
+![Pylint](https://github.com/seanmacaryrestuarantApp/workflows/Pylint/badge.svg)
