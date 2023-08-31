@@ -37,6 +37,6 @@ jobs:
     - name: Test with Django's test runner
       working-directory: restaurantApp/restApp
       run: |
-        python ../restApp/manage.py test
+        python manage.py test
       env: 
          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
