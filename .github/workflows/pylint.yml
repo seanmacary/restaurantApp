@@ -18,4 +18,5 @@ jobs:
         if [ -f restApp/requirements.txt ]; then pip install -r restApp/requirements.txt; fi
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint --init-hook="import sys; sys.setdefaultencoding('utf-8')" $(git ls-files '*.py')
+
