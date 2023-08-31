@@ -2,8 +2,8 @@
 
 ## User Management
 - [x] **Register**: Allows a new user to create an account.
-- [x] **Login**: Allows an existing user to log in and receive a token or session.
-- [x] **Logout**: Invalidates the user's current token or session.
+- [ ] **Login**: Allows an existing user to log in and receive a token or session.
+- [ ] **Logout**: Invalidates the user's current token or session.
 - [ ] **Profile View/Edit**: Allows a user to view and edit their profile details.
 - [ ] **Password Reset**: Allows a user to reset their password if forgotten.
 - [ ] **Delete Account**: Allows a user to delete their account.
