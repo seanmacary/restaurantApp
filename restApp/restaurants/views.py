@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from django.db.models import F, Func
 from django.db.utils import IntegrityError
@@ -34,7 +35,7 @@ class RestaurantList(generics.ListAPIView):
 
 class UserRegistrationView(CreateAPIView):
     authentication_classes = ()  # Override the default authentication
-    permission_classes = ()
+    permission_classes = [AllowAny]
     serializer_class = UserRegistrationSerializer
     queryset = User.objects.all()
 
@@ -51,13 +52,23 @@ class UserRegistrationView(CreateAPIView):
 
 
 class UserLoginView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         username = request.data.get("UserName")
         password = request.data.get("Password")
-        user = authenticate(username=username, password=password)
+
+        if not username or not password:
+            #print("Missing fields")
+            return Response({"error": "Both UserName and Password are required."}, status=400)
+
+        user = authenticate(request, UserName=username, password=password)
         if user:
+            #print("User authenticated")
             token, created = Token.objects.get_or_create(user=user)
             return Response({"token": token.key})
+
+        #print("Invalid credentials")
         return Response({"error": "Invalid credentials"}, status=400)
 
 

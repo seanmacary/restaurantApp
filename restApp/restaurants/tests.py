@@ -37,3 +37,34 @@ class UserRegistrationTestCase(APITestCase):
         )
         response = self.client.post(self.register_url, self.user_data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class UserLoginTestCase(APITestCase):
+
+    def setUp(self):
+        self.login_url = reverse('login')
+        self.login_data = {
+            'UserName': 'testuser',
+            'Password': 'testpassword'
+        }
+        self.user = CustomUser.objects.create_user(
+            UserName='testuser',
+            email='testuser@example.com',
+            password='testpassword'
+        )
+
+    def test_valid_login(self):
+        response = self.client.post(self.login_url, self.login_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('token' in response.data)
+
+    def test_invalid_login(self):
+        self.login_data['Password'] = 'wrongpassword'
+        response = self.client.post(self.login_url, self.login_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['error'], 'Invalid credentials')
+
+    def test_missing_fields(self):
+        response = self.client.post(self.login_url, {'UserName': 'testuser'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['error'], 'Both UserName and Password are required.')
