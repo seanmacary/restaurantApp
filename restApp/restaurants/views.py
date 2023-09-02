@@ -1,14 +1,14 @@
 from .models import Restaurants, CustomUser as User
-from .serializers import RestaurantSerializer, UserRegistrationSerializer, UserProfileSerializer
+from .serializers import RestaurantSerializer, UserRegistrationSerializer, UserProfileSerializer, \
+    ChangePasswordSerializer
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.views import APIView
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.db.models import F, Func
 from django.db.utils import IntegrityError
 
@@ -59,32 +59,41 @@ class UserLoginView(APIView):
         password = request.data.get("Password")
 
         if not username or not password:
-            #print("Missing fields")
+            # print("Missing fields")
             return Response({"error": "Both UserName and Password are required."}, status=400)
 
         user = authenticate(request, UserName=username, password=password)
         if user:
-            #print("User authenticated")
+            # print("User authenticated")
             token, created = Token.objects.get_or_create(user=user)
             return Response({"token": token.key})
 
-        #print("Invalid credentials")
+        # print("Invalid credentials")
         return Response({"error": "Invalid credentials"}, status=400)
 
 
-class UserProfileView(RetrieveUpdateAPIView):
-    queryset = User.objects.all()
+class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
-    lookup_field = 'UserName'
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def get_object(self):
         return self.request.user
 
 
-class LogoutView(APIView):
-    authentication_classes = [TokenAuthentication]
+class ChangePasswordView(generics.GenericAPIView):
+    serializer_class = ChangePasswordSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def post(self, request):
-        request.auth.delete()
-        return Response(status=status.HTTP_200_OK)
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            old_password = serializer.validated_data.get('old_password')
+            if not self.request.user.check_password(old_password):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            self.request.user.set_password(serializer.validated_data.get('new_password'))
+            self.request.user.save()
+            update_session_auth_hash(request, self.request.user)  # Important, to update the session with the new password
+            return Response({"success": "Password updated successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

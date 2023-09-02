@@ -125,6 +125,7 @@ class UserToken(models.Model):
     def save(self, *args, **kwargs):
         if not self.key:
             self.key = self.generate_key()
+            # print(f"Token generated: {self.key}")
         return super().save(*args, **kwargs)
 
     def generate_key(self):

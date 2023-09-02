@@ -22,3 +22,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['UserName', 'email', 'first_name', 'last_name', 'bio', 'profile_picture']
 
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
